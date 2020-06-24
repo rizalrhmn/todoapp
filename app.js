@@ -1,63 +1,63 @@
 //jshint esversion:6
-//Panggil express framework supaya ngodingnya lebih singkat
+//Call express framework so we can code more efficient
 const express = require("express");
-//Panggil body-parser, supaya bisa ngambil data dari post request HTML
+//Call body-parser, so we can parse the data from HTML post request
 const bodyParser = require("body-parser");
-//Panggil module internal utk dapetin Date dan day
+//Call our own internal module for getting currentdate
 const date = require(__dirname + "/date.js");
 
-//Jalaninj si expressnya
+//Run the express
 const app = express();
 
-//Supaya bisa parse data HTML dari post requst
+//Basic configuration for using body parser module
 app.use(bodyParser.urlencoded({extended: true}));
-//Supaya bisa panggil file CSS dan images yang ada di folder public
+//So we can call static files (image and css) from public folder
 app.use(express.static("public"));
-//Supaya bisa pake ejs framework utk Views. Semua di folder views.
+//We're using ejs as a view engine.
 app.set("view engine", "ejs");
 
-//Deklarasikan item array utk dikirim ke ejs, supaya bisa nampilin beberapa list item.
-//Dibedakan ada 2, yang 1 untuk halaman route / yang 1 utk route /work
+//Declare array items so we can send it to index.ejs. So it can shows several list items.
+//We seperate it into 2 array, 1 for / route, 1 for /work route.
 const listItems = ["Jajan", "Belanja", "Tidur"];
 const workingItems = [];
 
-//Serve halaman /
+//Serve / page route
 app.get("/", function(req, res) {
 
-  //Panggil function getdate dari modul date.js
+  //Call function getdate from date.js module
   let today = date.getDate();
-  //Buka file index.ejs yang ada di folder views (yang isinya HTML + variable yg bisa diubah dari app.js ini)
-  //Kirim variablenya.
+  //Open file index.ejs that's in Views folder (that contains HTML and variable that we can change from this app.js)
+  //Send the variable.
   res.render("index", {pageTitle: today, listItemsText: listItems});
 });
 
-//Serve halaman /work
+//Serve /work page route
 app.get("/work", function(req, res) {
-  //Buka file index.ejs yang ada di folder views (yang isinya HTML + variable yg bisa diubah dari app.js ini)
-  //Kirim variablenya.
+  //Open file index.ejs that's in Views folder (that contains HTML and variable that we can change from this app.js)
+  //Send the variable.
   res.render("index", {pageTitle: "Work", listItemsText: workingItems});
 });
 
-// Menangkap post request dan melakukan suatu action
+// Catch post request, then do some actions
 app.post("/", function(req, res) {
-  //Dapetin property value dari button. Untuk nanti difilter.
+  //Getting property value from button. For later filtering purpose
   const buttonValue = req.body.button;
-  //tangkap item baru yang dibuat.
+  //catch recent item created
   let newItem = req.body.newItem;
 
-  //Kalau value dari button berasal dari page route /work, maka
+  //If the post request from Work route (marked by "Work" value from the button)
   if ( buttonValue === "Work") {
-    //tambahin item baru ke array yang khusus page route /work lalu redirect ke /work
+    //add new item to the array workingItems, then redirect to /work route
     workingItems.push(newItem);
     res.redirect("/work");
-  } else { //Selain itu, pasti dari halaman /
-    //tambahin item baru ke array yang khusus page route / lalu redirect ke /
+  } else { //if the post request not from /work, then it must be from /
+    //add new item to the array listItems, then redirect to / route
     listItems.push(newItem);
     res.redirect("/");
   };
 });
 
-//Jalankan server nodejs di port 3000
+//Run nodejs on port 3000
 app.listen(3000, function() {
   console.log("Server is running on Port 3000");
 });
