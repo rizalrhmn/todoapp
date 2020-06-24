@@ -1,0 +1,43 @@
+#main-list {
+  margin: 30px 33%;
+}
+
+@media screen and (max-width:960px) {
+  #main-list {
+    margin: 30px 25%;
+  }
+}
+
+@media screen and (max-width:720px) {
+  #main-list {
+    margin: 30px 18%;
+  }
+}
+
+#footer {
+  text-align: center;
+}
+
+li:last-child {
+  margin-bottom: 20px;
+}
+
+p {
+  display: inline;
+}
+
+input:checked+p {
+  text-decoration: line-through;
+}
+
+.jumbotron {
+  text-align: center;
+}
+
+.form-control {
+  margin-top: 5px;
+}
+
+.button-div {
+  text-align: center;
+}

@@ -1,0 +1,37 @@
+<%- include('header'); -%>
+
+<div class="jumbotron">
+  <h1 class="display-4">Static To do app</h1>
+  <p class="lead">Please add your to do list so you won't get left behind!</p>
+</div>
+
+<section id="main-list">
+
+  <div class="card bg-light mb-3">
+    <div class="card-header"><%= pageTitle %></div>
+    <div class="card-body">
+      <h5 class="card-title">Your to do lists :</h5>
+      <ul class="list-group list-group-flush">
+        <% for (let i=0;i<listItemsText.length; i++) { %>
+            <li class="list-group-item"> <input type="checkbox" name="" value=""> <p><%= listItemsText[i] %></p> </li>
+        <% } %>
+      </ul>
+      <form action="/" method="post">
+        <div class="form-group">
+          <div class="form-row">
+            <div class="col-10">
+                <input class="form-control" type="text" name="newItem">
+            </div>
+            <div class="col-2 button-div">
+                <button class="btn btn-lg btn-primary rounded-circle" type="submit" name="button" value=<%= pageTitle %>>+</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+
+<%- include('footer'); -%>
