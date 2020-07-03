@@ -1,35 +1,85 @@
 <%- include('header'); -%>
 
-<div class="jumbotron">
-  <h1 class="display-4">Static To do app</h1>
-  <p class="lead">Please add your to do list so you won't get left behind!</p>
-</div>
-
 <section id="main-list">
+  <div class="container-fluid">
+    <div class="row">
+      <% listsText.forEach(function(list) { %>
+      <div class="col-lg-4 col-md-6">
+        <div class="card bg-light mb-3">
+          <div class="card-header"><%= list.name %></div>
+          <div class="card-body">
+            <h5 class="card-title">Your to do lists :</h5>
+            <ul class="list-group list-group-flush">
+              <% itemsText.forEach(function(item) { %>
+              <% if (item.list._id == list.id) { %>
+              <li class="list-group-item">
+                <form action="/delete" method="post">
+                  <input type="checkbox" name="checkbox" value=<%= item.id %> onchange="submit()">
+                  <p><%= item.name %></p>
+                </form>
 
-  <div class="card bg-light mb-3">
-    <div class="card-header"><%= pageTitle %></div>
-    <div class="card-body">
-      <h5 class="card-title">Your to do lists :</h5>
-      <ul class="list-group list-group-flush">
-        <% for (let i=0;i<listItemsText.length; i++) { %>
-            <li class="list-group-item"> <input type="checkbox" name="" value=""> <p><%= listItemsText[i] %></p> </li>
-        <% } %>
-      </ul>
-      <form action="/" method="post">
-        <div class="form-group">
-          <div class="form-row">
-            <div class="col-10">
-                <input class="form-control" type="text" name="newItem">
-            </div>
-            <div class="col-2 button-div">
-                <button class="btn btn-lg btn-primary rounded-circle" type="submit" name="button" value=<%= pageTitle %>>+</button>
-            </div>
+              </li>
+              <% }; %>
+
+              <% }); %>
+            </ul>
+            <form action="/" method="post">
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col-10">
+                    <input class="form-control" type="text" name="newItem">
+                  </div>
+                  <div class="col-2 button-div">
+                    <button class="btn btn-lg btn-primary rounded-circle" type="submit" name="createItem" value=<%= list.id %>>+</button>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
-      </form>
+      </div>
+
+      <% }); %>
     </div>
+
+    <div class="row">
+      <div class="col button-div">
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#exampleModal">
+          Create New List
+        </button>
+
+        <!-- Modal -->
+        <form action="/createlist" method="post">
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">What's this list about?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <input class="form-control" type="text" name="newList" placeholder="Groceries, or Vacation or something....">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+    </div>
+
   </div>
+
 </section>
 
 

@@ -4,10 +4,86 @@ const express = require("express");
 //Call body-parser, so we can parse the data from HTML post request
 const bodyParser = require("body-parser");
 //Call our own internal module for getting currentdate
-const date = require(__dirname + "/date.js");
+//const date = require(__dirname + "/date.js");
+//Call Mongoose
+const mongoose = require("mongoose");
+
 
 //Run the express
 const app = express();
+
+mongoose.connect("mongodb://localhost:27017/todoDB", {useNewUrlParser: true, useUnifiedTopology: true });
+
+
+const listsSchema = new mongoose.Schema({
+  name: String
+});
+
+const List = mongoose.model("List", listsSchema);
+
+const list1 = new List({
+  name: "Home",
+});
+
+const list2 = new List({
+  name: "Work"
+});
+
+
+const defaultLists = [list1, list2];
+
+const itemsSchema = new mongoose.Schema({
+  name: String,
+  list: listsSchema
+});
+
+const Item = mongoose.model("Item", itemsSchema);
+
+const item1 = new Item({
+  name: "Eat",
+  list: list1
+});
+
+const item2 = new Item({
+  name: "Walking",
+  list: list1
+});
+
+const item3 = new Item({
+  name: "Sleep",
+  list: list1
+});
+
+const defaultItems = [item1, item2, item3];
+
+Item.countDocuments({}, function(err, count){
+  if (count===0) {
+    Item.insertMany(defaultItems, function(err) {
+       if (!err) {
+         console.log("No documents. Add default items success!");
+       } else {
+         console.log(err);
+       }
+     });
+  } else {
+    console.log("There are " + count + " documents, no need to create default items");
+  }
+});
+
+List.countDocuments({}, function(err, count) {
+  if (count===0) {
+    List.insertMany(defaultLists, function(err){
+      if (!err) {
+        console.log("No Lists. Add default lists success!");
+      } else {
+        console.log(err);
+      }
+    });
+  } else {
+    console.log("There are " + count + " lists, no need to create new lists");
+  };
+});
+
 
 //Basic configuration for using body parser module
 app.use(bodyParser.urlencoded({extended: true}));
@@ -16,45 +92,61 @@ app.use(express.static("public"));
 //We're using ejs as a view engine.
 app.set("view engine", "ejs");
 
-//Declare array items so we can send it to index.ejs. So it can shows several list items.
-//We seperate it into 2 array, 1 for / route, 1 for /work route.
-const listItems = ["Jajan", "Belanja", "Tidur"];
-const workingItems = [];
-
 //Serve / page route
 app.get("/", function(req, res) {
 
-  //Call function getdate from date.js module
-  let today = date.getDate();
-  //Open file index.ejs that's in Views folder (that contains HTML and variable that we can change from this app.js)
-  //Send the variable.
-  res.render("index", {pageTitle: today, listItemsText: listItems});
-});
+  List.find({}, function(err, foundLists){
+    Item.find({}, function(err, foundItems){
+        res.render("index", {listsText: foundLists, itemsText: foundItems});
+    });
+  });
 
-//Serve /work page route
-app.get("/work", function(req, res) {
-  //Open file index.ejs that's in Views folder (that contains HTML and variable that we can change from this app.js)
-  //Send the variable.
-  res.render("index", {pageTitle: "Work", listItemsText: workingItems});
 });
 
 // Catch post request, then do some actions
 app.post("/", function(req, res) {
   //Getting property value from button. For later filtering purpose
-  const buttonValue = req.body.button;
+  const listId = req.body.createItem;
   //catch recent item created
-  let newItem = req.body.newItem;
+  const itemName = req.body.newItem;
 
-  //If the post request from Work route (marked by "Work" value from the button)
-  if ( buttonValue === "Work") {
-    //add new item to the array workingItems, then redirect to /work route
-    workingItems.push(newItem);
-    res.redirect("/work");
-  } else { //if the post request not from /work, then it must be from /
-    //add new item to the array listItems, then redirect to / route
-    listItems.push(newItem);
+  List.findById(listId, function(err, foundList){
+
+    const item = new Item({
+      name: itemName,
+      list: foundList
+    });
+
+    item.save();
+    console.log("Add item success!");
     res.redirect("/");
-  };
+  });
+
+});
+
+app.post("/delete", function(req, res) {
+  const idItem = req.body.checkbox;
+
+  Item.deleteOne({ _id: idItem }, function(err) {
+    if (!err) {
+      console.log("Delete item success!");
+    } else {
+      console.log(err);
+    }
+  });
+
+  res.redirect("/");
+});
+
+app.post("/createlist", function(req, res){
+  const listName = req.body.newList;
+
+  const newList = new List({
+    name: listName
+  });
+
+  newList.save();
+  res.redirect("/");
 });
 
 //Run nodejs on port 3000
