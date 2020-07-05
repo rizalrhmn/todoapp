@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 //const date = require(__dirname + "/date.js");
 //Call Mongoose
 const mongoose = require("mongoose");
+const _ = require("lodash");
 
 
 //Run the express
@@ -103,6 +104,20 @@ app.get("/", function(req, res) {
 
 });
 
+app.get("/list/:listId", function(req, res){
+  // const searchListName = req.params.listname;
+  const searchListId = req.params.listId;
+
+  List.findById({ _id: searchListId }, function(err, foundList){
+    Item.find({ list: foundList }, function(err, foundItems){
+      res.render("list", {listText: foundList, itemsText: foundItems});
+    });
+  });
+
+
+
+});
+
 // Catch post request, then do some actions
 app.post("/", function(req, res) {
   //Getting property value from button. For later filtering purpose
@@ -119,24 +134,40 @@ app.post("/", function(req, res) {
 
     item.save();
     console.log("Add item success!");
-    res.redirect("/");
+    res.redirect("/list/" + listId);
   });
 
 });
 
 app.post("/delete", function(req, res) {
   const idItem = req.body.checkbox;
+  const listId = req.body.listIdInput;
 
   Item.deleteOne({ _id: idItem }, function(err) {
     if (!err) {
       console.log("Delete item success!");
+      res.redirect("/list/" + listId);
     } else {
       console.log(err);
     }
   });
 
-  res.redirect("/");
+
 });
+
+app.post("/seelist", function(req, res) {
+  const listId = req.body.seeList;
+  res.redirect("/list/" + listId);
+
+
+  // List.findById({_id: listId}, function(err, foundList){
+  //   const kebabListName = _.kebabCase(foundList.name);
+  //   res.redirect("/list/" + kebabListName);
+  // });
+
+});
+
+
 
 app.post("/createlist", function(req, res){
   const listName = req.body.newList;

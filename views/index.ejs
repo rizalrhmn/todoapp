@@ -23,18 +23,23 @@
 
               <% }); %>
             </ul>
-            <form action="/" method="post">
+            <!-- <form action="/" method="post"> -->
               <div class="form-group">
                 <div class="form-row">
-                  <div class="col-10">
+                  <!-- <div class="col-10">
                     <input class="form-control" type="text" name="newItem">
                   </div>
                   <div class="col-2 button-div">
                     <button class="btn btn-lg btn-primary rounded-circle" type="submit" name="createItem" value=<%= list.id %>>+</button>
+                  </div> -->
+                  <div class="col button-div">
+                    <form action="/seelist" method="post">
+                        <button class="btn btn-warning" type="submit" name="seeList" value=<%= list.id %>>See this List</button>
+                    </form>
                   </div>
                 </div>
               </div>
-            </form>
+            <!-- </form> -->
           </div>
         </div>
       </div>

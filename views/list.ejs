@@ -1,0 +1,55 @@
+<%- include('header'); -%>
+
+<section id="main-list">
+  <div class="container-fluid">
+    <div class="row">
+
+      <div class="col-lg-4 col-md-6">
+        <div class="card bg-light mb-3">
+          <div class="card-header"><%= listText.name %></div>
+          <div class="card-body">
+            <h5 class="card-title">Your to do lists :</h5>
+            <ul class="list-group list-group-flush">
+              <% itemsText.forEach(function(item) { %>
+              <% if (item.list._id == listText.id) { %>
+              <li class="list-group-item">
+                <form action="/delete" method="post">
+                  <input type="checkbox" name="checkbox" value=<%= item.id %> onchange="submit()">
+                  <input type="hidden" name="listIdInput" value=<%= item.list._id %>>
+                  <p><%= item.name %></p>
+                </form>
+
+              </li>
+              <% }; %>
+
+              <% }); %>
+            </ul>
+            <form action="/" method="post">
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col-10">
+                    <input class="form-control" type="text" name="newItem">
+                  </div>
+                  <div class="col-2 button-div">
+                    <button class="btn btn-lg btn-primary rounded-circle" type="submit" name="createItem" value=<%= listText.id %>>+</button>
+                  </div>
+                  <div class="col button-div">
+                    <a class="btn btn-warning" href="/">Back to Home</a>
+
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<%- include('footer'); -%>
