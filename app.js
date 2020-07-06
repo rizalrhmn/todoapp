@@ -93,6 +93,7 @@ app.use(express.static("public"));
 //We're using ejs as a view engine.
 app.set("view engine", "ejs");
 
+
 //Serve / page route
 app.get("/", function(req, res) {
 
@@ -110,13 +111,35 @@ app.get("/list/:listId", function(req, res){
 
   List.findById({ _id: searchListId }, function(err, foundList){
     Item.find({ list: foundList }, function(err, foundItems){
-      res.render("list", {listText: foundList, itemsText: foundItems});
+      const dummyItem = {
+        _id: "abc"
+      };
+      const emptyItem = [];
+
+      if (!err) {
+        res.render("list", {listText: foundList, itemsText: foundItems, itemUpdate: dummyItem});
+      } else {
+        res.render("list", {listText: foundList, itemsText: emptyItem, itemUpdate: dummyItem});
+      };
+
     });
   });
 
-
-
 });
+
+app.get("/update/list/:listId/item/:itemId", function(req, res){
+  const searchListId = req.params.listId;
+  const searchItemId = req.params.itemId;
+
+  List.findById({ _id: searchListId }, function(err, foundList){
+    Item.find({ list: foundList }, function(err, foundItems){
+      Item.findOne({ _id: searchItemId }, function(err, foundItem){
+          res.render("list", {listText: foundList, itemsText: foundItems, itemUpdate: foundItem});
+      });
+    });
+  });
+});
+
 
 // Catch post request, then do some actions
 app.post("/", function(req, res) {
@@ -140,10 +163,10 @@ app.post("/", function(req, res) {
 });
 
 app.post("/delete", function(req, res) {
-  const idItem = req.body.checkbox;
+  const itemId = req.body.checkbox;
   const listId = req.body.listIdInput;
 
-  Item.deleteOne({ _id: idItem }, function(err) {
+  Item.deleteOne({ _id: itemId }, function(err) {
     if (!err) {
       console.log("Delete item success!");
       res.redirect("/list/" + listId);
@@ -154,6 +177,30 @@ app.post("/delete", function(req, res) {
 
 
 });
+
+
+app.post("/checkupdateitem", function(req, res){
+  const itemId = req.body.itemIdInput;
+  const listId = req.body.listIdInput;
+
+  res.redirect("/update/list/" + listId + "/item/" + itemId);
+});
+
+app.post("/updateitem", function(req, res){
+  const itemId = req.body.itemIdInput;
+  const newItemName = req.body.inputName;
+  const listId = req.body.listIdInput;
+
+  Item.updateOne({ _id: itemId }, { name: newItemName}, function(err){
+    if (!err) {
+      console.log("Update item success");
+      res.redirect("/list/" + listId);
+    } else {
+      console.log(err);
+    };
+  });
+});
+
 
 app.post("/seelist", function(req, res) {
   const listId = req.body.seeList;

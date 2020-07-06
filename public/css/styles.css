@@ -41,3 +41,37 @@ input:checked+p {
 .button-div {
   text-align: center;
 }
+
+.list-form {
+  margin-top: 7px;
+}
+
+.list-form.update-form {
+  margin-top: 0;
+}
+
+.update-form {
+  display: inline;
+  width: 80%;
+  margin-left: 3px;
+  margin-top: 0;
+}
+
+.update-item-form {
+  margin-right: 3px;
+}
+
+.hidden-form {
+  visibility: hidden;
+}
+
+.update-column {
+  flex: 0 0 91%;
+  max-width: 91%;
+  padding-left: 0;
+  padding-right: 0;
+}
+.update-button {
+  position: absolute;
+  right: 0;
+}

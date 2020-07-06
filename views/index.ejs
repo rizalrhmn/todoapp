@@ -13,11 +13,7 @@
               <% itemsText.forEach(function(item) { %>
               <% if (item.list._id == list.id) { %>
               <li class="list-group-item">
-                <form action="/delete" method="post">
-                  <input type="checkbox" name="checkbox" value=<%= item.id %> onchange="submit()">
-                  <p><%= item.name %></p>
-                </form>
-
+                <p><%= item.name %></p>
               </li>
               <% }; %>
 
