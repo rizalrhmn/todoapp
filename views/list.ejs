@@ -4,29 +4,39 @@
   <div class="container-fluid">
     <div class="row">
 
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-4 col-md-6 list-card">
         <div class="card bg-light mb-3">
-          <div class="card-header"><%= listText.name %></div>
+          <div class="card-header">
+            <div class="row card-header-home">
+              <div class="col-10">
+                <h3 class="card-title"><%= listText.name %></h3>
+              </div>
+              <div class="col-1">
+                <a class="btn btn-light rounded-circle" type="button" name="backHome" href="/"><i class="fas fa-home"></i></a>
+              </div>
+            </div>
+
+
+          </div>
           <div class="card-body">
-            <h5 class="card-title">Your To-Do List</h5>
+            <h6>Your To-Do Lists</h6>
             <ul class="list-group list-group-flush">
               <% itemsText.forEach(function(item) { %>
               <% if (item.list._id == listText.id) { %>
               <li class="list-group-item">
-
                   <% if ( item.id != itemUpdate.id ) { %>
                     <div class="row">
                       <div class="col-10">
                         <form class="list-form" action="/delete" method="post">
-                          <input type="checkbox" name="checkbox" value=<%= item.id %> onchange="submit()">
-                          <input type="hidden" name="listIdInput" value=<%= item.list._id %>>
+                          <input type="checkbox" name="checkbox" value="<%= item.id %>" onchange="submit()">
+                          <input type="hidden" name="listIdInput" value="<%= item.list._id %>">
                           <p><%= item.name %></p>
                         </form>
                       </div>
                       <div class="col-2">
                         <form class="update-item-form" action="/checkupdateitem" method="post">
-                          <button class="btn btn-light rounded-circle" type="submit" name="itemIdInput" value=<%= item.id %>><i class="far fa-edit"></i></button>
-                          <input type="hidden" name="listIdInput" value=<%= item.list._id %>>
+                          <button class="btn btn-light rounded-circle" type="submit" name="itemIdInput" value="<%= item.id %>"><i class="far fa-edit"></i></button>
+                          <input type="hidden" name="listIdInput" value="<%= item.list._id %>">
                         </form>
                       </div>
                     </div>
@@ -34,24 +44,19 @@
                     <div class="row">
                       <div class="col-1">
                         <form action="/delete" method="post">
-                          <input type="checkbox" name="checkbox" value=<%= item.id %> onchange="submit()">
-                          <input type="hidden" name="listIdInput" value=<%= item.list._id %>>
+                          <input type="checkbox" name="checkbox" value="<%= item.id %>" onchange="submit()">
+                          <input type="hidden" name="listIdInput" value="<%= item.list._id %>">
                         </form>
                       </div>
                       <div class="col-10 update-column">
                         <form class="update-item-form" action="/updateitem" method="post">
-                          <input class="form-control update-form" type="text" name="inputName" value=<%= item.name %>>
-                          <button class="btn btn-success rounded-circle update-button" type="submit" name="itemIdInput" value=<%= item.id %>><i class="fas fa-check"></i></button>
-                          <input type="hidden" name="listIdInput" value=<%= item.list._id %>>
+                          <input class="form-control update-form" type="text" name="inputName" value="<%= item.name %>">
+                          <button class="btn btn-success rounded-circle update-button" type="submit" name="itemIdInput" value="<%= item.id %>"><i class="fas fa-check"></i></button>
+                          <input type="hidden" name="listIdInput" value="<%= item.list._id %>">
                         </form>
                       </div>
                     </div>
-
                   <% }; %>
-
-
-
-
               </li>
               <% }; %>
 
@@ -65,10 +70,6 @@
                   </div>
                   <div class="col-2 button-div">
                     <button class="btn btn-lg btn-primary rounded-circle" type="submit" name="createItem" value=<%= listText.id %>>+</button>
-                  </div>
-                  <div class="col button-div">
-                    <a class="btn btn-warning" href="/">Back to Home</a>
-
                   </div>
                 </div>
               </div>

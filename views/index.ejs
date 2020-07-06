@@ -6,9 +6,40 @@
       <% listsText.forEach(function(list) { %>
       <div class="col-lg-4 col-md-6">
         <div class="card bg-light mb-3">
-          <div class="card-header"><%= list.name %></div>
+          <div class="card-header">
+            <% if (list.id != listUpdate.id) { %>
+              <div class="row card-header-home">
+                <div class="col-8">
+                  <h3 class="card-title"><%= list.name %></h3>
+                </div>
+                <div class="col-4">
+                  <form class="inline-form-home" action="/checkupdatelist" method="post">
+                      <button class="btn btn-light rounded-circle" type="submit" name="checkUpdateList" value="<%= list.id %>"><i class="fas fa-edit"></i></button>
+                  </form>
+                  <form class="inline-form-home" action="/deletelist" method="post">
+                      <button class="btn btn-danger rounded-circle" type="submit" name="deleteList" value="<%= list.id %>"><i class="fas fa-trash"></i></button>
+                  </form>
+
+                </div>
+              </div>
+            <% } else { %>
+              <div class="row card-header-home">
+                <div class="col-12">
+                  <form class="inline-form-home" action="/updatelist" method="post">
+                      <input class="form-control update-form" type="text" name="inputListName" value="<%= list.name %>">
+                      <button class="btn btn-success rounded-circle" type="submit" name="updateList" value="<%= list.id %>"><i class="fas fa-check"></i></button>
+                  </form>
+                  <form class="inline-form-home" action="/deletelist" method="post">
+                      <button class="btn btn-danger rounded-circle" type="submit" name="deleteList" value="<%= list.id %>"><i class="fas fa-trash"></i></button>
+                  </form>
+
+                </div>
+              </div>
+            <% }; %>
+
+          </div>
           <div class="card-body">
-            <h5 class="card-title">Your to do lists :</h5>
+            <h6>Your To-Do Lists</h6>
             <ul class="list-group list-group-flush">
               <% itemsText.forEach(function(item) { %>
               <% if (item.list._id == list.id) { %>
@@ -22,15 +53,9 @@
             <!-- <form action="/" method="post"> -->
               <div class="form-group">
                 <div class="form-row">
-                  <!-- <div class="col-10">
-                    <input class="form-control" type="text" name="newItem">
-                  </div>
-                  <div class="col-2 button-div">
-                    <button class="btn btn-lg btn-primary rounded-circle" type="submit" name="createItem" value=<%= list.id %>>+</button>
-                  </div> -->
                   <div class="col button-div">
                     <form action="/seelist" method="post">
-                        <button class="btn btn-warning" type="submit" name="seeList" value=<%= list.id %>>See this List</button>
+                        <button class="btn btn-warning" type="submit" name="seeList" value="<%= list.id %>">See this List</button>
                     </form>
                   </div>
                 </div>
@@ -41,42 +66,6 @@
       </div>
 
       <% }); %>
-    </div>
-
-    <div class="row">
-      <div class="col button-div">
-
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#exampleModal">
-          Create New List
-        </button>
-
-        <!-- Modal -->
-        <form action="/createlist" method="post">
-          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">What's this list about?</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <input class="form-control" type="text" name="newList" placeholder="Groceries, or Vacation or something....">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Create</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-
-      </div>
-
     </div>
 
   </div>

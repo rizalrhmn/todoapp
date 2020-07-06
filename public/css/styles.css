@@ -30,16 +30,35 @@ input:checked+p {
   text-decoration: line-through;
 }
 
+input[name=inputListName] {
+  font-size: 1.5rem;
+}
+
+.nav-item {
+  margin-top: 20px;
+}
+
+
 .jumbotron {
   text-align: center;
+}
+
+.fixed-button {
+  position: fixed;
 }
 
 .form-control {
   margin-top: 5px;
 }
 
+.card-header-home {
+  margin-top: 10px;
+}
+
 .button-div {
-  text-align: center;
+  text-align: right;
+  bottom: 0;
+  right: 0;
 }
 
 .list-form {
@@ -52,9 +71,18 @@ input:checked+p {
 
 .update-form {
   display: inline;
-  width: 80%;
+  width: 73%;
   margin-left: 3px;
   margin-top: 0;
+}
+
+.inline-form-home {
+  display: inline;
+}
+
+.list-card {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .update-item-form {

@@ -3,17 +3,18 @@
 const express = require("express");
 //Call body-parser, so we can parse the data from HTML post request
 const bodyParser = require("body-parser");
-//Call our own internal module for getting currentdate
-//const date = require(__dirname + "/date.js");
 //Call Mongoose
 const mongoose = require("mongoose");
-const _ = require("lodash");
-
 
 //Run the express
 const app = express();
 
 mongoose.connect("mongodb://localhost:27017/todoDB", {useNewUrlParser: true, useUnifiedTopology: true });
+
+const dummyItem = {
+  _id: "abc"
+};
+const emptyItems = [];
 
 
 const listsSchema = new mongoose.Schema({
@@ -23,13 +24,12 @@ const listsSchema = new mongoose.Schema({
 const List = mongoose.model("List", listsSchema);
 
 const list1 = new List({
-  name: "Home",
+  name: "Family",
 });
 
 const list2 = new List({
   name: "Work"
 });
-
 
 const defaultLists = [list1, list2];
 
@@ -46,7 +46,7 @@ const item1 = new Item({
 });
 
 const item2 = new Item({
-  name: "Walking",
+  name: "Learn",
   list: list1
 });
 
@@ -99,7 +99,7 @@ app.get("/", function(req, res) {
 
   List.find({}, function(err, foundLists){
     Item.find({}, function(err, foundItems){
-        res.render("index", {listsText: foundLists, itemsText: foundItems});
+        res.render("index", {listsText: foundLists, itemsText: foundItems, listUpdate: dummyItem});
     });
   });
 
@@ -111,23 +111,32 @@ app.get("/list/:listId", function(req, res){
 
   List.findById({ _id: searchListId }, function(err, foundList){
     Item.find({ list: foundList }, function(err, foundItems){
-      const dummyItem = {
-        _id: "abc"
-      };
-      const emptyItem = [];
 
       if (!err) {
         res.render("list", {listText: foundList, itemsText: foundItems, itemUpdate: dummyItem});
       } else {
-        res.render("list", {listText: foundList, itemsText: emptyItem, itemUpdate: dummyItem});
+        res.render("list", {listText: foundList, itemsText: emptyItems, itemUpdate: dummyItem});
       };
+
+    });
+  });
+});
+
+app.get("/list/:listId/update", function(req, res){
+  const searchListId = req.params.listId;
+
+  List.find({}, function(err, foundLists){
+    Item.find({}, function(err, foundItems){
+      List.findById({ _id: searchListId }, function(err, foundList){
+        res.render("index", {listsText: foundLists, itemsText: foundItems, listUpdate: foundList});
+      });
 
     });
   });
 
 });
 
-app.get("/update/list/:listId/item/:itemId", function(req, res){
+app.get("/list/:listId/item/:itemId/update", function(req, res){
   const searchListId = req.params.listId;
   const searchItemId = req.params.itemId;
 
@@ -140,16 +149,12 @@ app.get("/update/list/:listId/item/:itemId", function(req, res){
   });
 });
 
-
 // Catch post request, then do some actions
 app.post("/", function(req, res) {
-  //Getting property value from button. For later filtering purpose
   const listId = req.body.createItem;
-  //catch recent item created
   const itemName = req.body.newItem;
 
   List.findById(listId, function(err, foundList){
-
     const item = new Item({
       name: itemName,
       list: foundList
@@ -159,7 +164,6 @@ app.post("/", function(req, res) {
     console.log("Add item success!");
     res.redirect("/list/" + listId);
   });
-
 });
 
 app.post("/delete", function(req, res) {
@@ -174,8 +178,6 @@ app.post("/delete", function(req, res) {
       console.log(err);
     }
   });
-
-
 });
 
 
@@ -183,7 +185,7 @@ app.post("/checkupdateitem", function(req, res){
   const itemId = req.body.itemIdInput;
   const listId = req.body.listIdInput;
 
-  res.redirect("/update/list/" + listId + "/item/" + itemId);
+  res.redirect("/list/" + listId + "/item/" + itemId + "/update");
 });
 
 app.post("/updateitem", function(req, res){
@@ -205,16 +207,7 @@ app.post("/updateitem", function(req, res){
 app.post("/seelist", function(req, res) {
   const listId = req.body.seeList;
   res.redirect("/list/" + listId);
-
-
-  // List.findById({_id: listId}, function(err, foundList){
-  //   const kebabListName = _.kebabCase(foundList.name);
-  //   res.redirect("/list/" + kebabListName);
-  // });
-
 });
-
-
 
 app.post("/createlist", function(req, res){
   const listName = req.body.newList;
@@ -224,8 +217,42 @@ app.post("/createlist", function(req, res){
   });
 
   newList.save();
+  console.log("Create List success!");
   res.redirect("/");
 });
+
+app.post("/deletelist", function(req, res){
+  const listId = req.body.deleteList;
+
+  List.deleteOne({ _id: listId }, function(err){
+    if (!err) {
+      console.log("Delete List success");
+      res.redirect("/");
+    } else {
+      console.log(err);
+    }
+  });
+});
+
+app.post("/checkupdatelist", function(req, res){
+  const listId = req.body.checkUpdateList;
+  res.redirect("/list/" + listId + "/update");
+});
+
+app.post("/updatelist", function(req, res){
+  const listId = req.body.updateList;
+  const newListName = req.body.inputListName;
+
+  List.updateOne({ _id: listId }, { name: newListName}, function(err){
+    if (!err) {
+      console.log("Update list success!");
+      res.redirect("/");
+    } else {
+      console.log(err);
+    }
+  });
+});
+
 
 //Run nodejs on port 3000
 app.listen(3000, function() {
